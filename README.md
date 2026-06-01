@@ -47,6 +47,26 @@ The original local file URL used during review was:
 file:///Users/ziyachenchen/Downloads/%E4%BD%93%E6%B8%A9%E6%95%B0%E6%8D%AE/analysis_output/web_report/index.html
 ```
 
+## GitHub Pages
+
+After GitHub Pages is enabled for this repository, the direct web-report URL is intended to be:
+
+```text
+https://chen-tzuy-ya.github.io/suunto_ai_homework/
+```
+
+The published Pages files live in:
+
+```text
+docs/
+```
+
+This directory is a publish-ready copy of:
+
+```text
+analysis_output/web_report/
+```
+
 ## Privacy Boundary
 
 This repository intentionally includes only:
@@ -54,5 +74,6 @@ This repository intentionally includes only:
 - `README.md`
 - `polish.md`
 - `analysis_output/`
+- `docs/`
 
 Original raw Excel files, FIT files, and source participant folders are not included in this publish set.

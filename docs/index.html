@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>温度穿戴需求、设备能力与小米实测评估</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="page-shell nav">
+        <div class="brand">
+          <span>Temperature Wearable Report</span>
+          <span>产品 / 算法内部分析页</span>
+        </div>
+        <nav class="nav-links" aria-label="页面目录">
+          <a href="#summary">结论</a>
+          <a href="#uses">主要用途</a>
+          <a href="#needs">真实需求</a>
+          <a href="#devices">设备能力</a>
+          <a href="#xiaomi">小米实测</a>
+          <a href="#threshold">阈值</a>
+          <a href="#decision">产品判断</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="summary">
+        <div class="page-shell">
+          <p class="eyebrow">基于本地实验数据 + 用户提供的 The Quantified Scientist 内容摘要整理，未联网核验外部视频。</p>
+          <h1>温度不是一个指标，而是一组算法输入能力。</h1>
+          <p class="hero-lede">
+            运动热负荷、入睡拐点、昼夜节律、夜间恢复和女性周期，对温度的误差、连续性、趋势一致性要求完全不同。
+            本页把用户真实需求、CORE 1/2 能力、直肠胶囊金标、水银温度计与小米实测放在同一张产品判断框架里。
+          </p>
+
+          <div class="hero-grid">
+            <div class="metric">
+              <div class="label">本地有效点测</div>
+              <div class="value">107</div>
+              <div class="note">4 名受试者，2026-03-26 至 2026-04-08；CORE 1 胸部核心温估计作为伪金标。</div>
+            </div>
+            <div class="metric">
+              <div class="label">小米 vs CORE胸核心温</div>
+              <div class="value">0.47℃</div>
+              <div class="note">MAE；RMSE 0.60℃，±0.3℃ 内仅 45%。</div>
+            </div>
+            <div class="metric">
+              <div class="label">水银 vs CORE胸核心温</div>
+              <div class="value">0.54℃</div>
+              <div class="note">MAE；Pearson r=0.56，趋势/排序比小米更像核心温，但绝对值低估。</div>
+            </div>
+            <div class="metric">
+              <div class="label">小米数值接近性</div>
+              <div class="value">74%</div>
+              <div class="note">全部点里更接近核心温；但相邻变化与胸皮温相关性更高。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="uses">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Use Cases</p>
+              <h2>温度主要用途：同一个传感器，服务的是不同算法问题</h2>
+            </div>
+            <p>
+              核心温适合判断体内热状态与节律；皮温更敏感于散热、环境和佩戴；DPG（核心温 - 皮肤温差）把两者组合起来，更接近状态识别特征。
+            </p>
+          </div>
+
+          <div class="grid four">
+            <article class="card">
+              <h3>运动热负荷 / 中暑风险</h3>
+              <p>关注核心温上升、大趋势、热区间和 DPG 高位。绝对值可以有一定偏差，但方向、连续性和高温风险不能错。</p>
+              <div class="tag-row">
+                <span class="tag core">核心温</span>
+                <span class="tag skin">皮温</span>
+                <span class="tag dpg">DPG</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>入睡时间 / 睡眠节律</h3>
+              <p>关注 Hammock 曲线开端：核心温从慢降转为陡降，皮温上升，DPG 快速下降。更看重 20-30 分钟窗口的拐点。</p>
+              <div class="tag-row">
+                <span class="tag core">Hammock</span>
+                <span class="tag dpg">DPG下降</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>昼夜节律 / 夜间恢复</h3>
+              <p>关注跨夜和多日基线。需要低噪声趋势、稳定个人偏差、足够连续的采样，不能只靠单日零散点测。</p>
+              <div class="tag-row">
+                <span class="tag core">多日核心温</span>
+                <span class="tag risk">≤0.5℃级别</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>女性周期高低温</h3>
+              <p>目标信号常在 0.2-0.5℃ 量级。设备误差、个体偏差和环境干扰如果同量级，就不适合作为独立主输入。</p>
+              <div class="tag-row">
+                <span class="tag core">稳定基线</span>
+                <span class="tag risk">0.2-0.3℃目标</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Algorithm Gates</p>
+              <h2>算法功能至少需要什么样的温度表现？</h2>
+            </div>
+            <p>误差门槛不是统一标准。越依赖微小波动和跨日比较，越需要稳定基线、低 MAE 和高趋势一致性。</p>
+          </div>
+
+          <div class="threshold-chart" aria-label="算法门槛图">
+            <div class="threshold-row">
+              <div class="threshold-label">女性周期 / 月周期</div>
+              <div class="rail high"><span style="width: 24%"></span></div>
+              <div>≤0.2-0.3℃</div>
+            </div>
+            <div class="threshold-row">
+              <div class="threshold-label">入睡拐点判断</div>
+              <div class="rail mid"><span style="width: 52%"></span></div>
+              <div>趋势优先</div>
+            </div>
+            <div class="threshold-row">
+              <div class="threshold-label">昼夜节律 / 恢复</div>
+              <div class="rail mid"><span style="width: 46%"></span></div>
+              <div>≤0.5℃ + 多日</div>
+            </div>
+            <div class="threshold-row">
+              <div class="threshold-label">运动热负荷</div>
+              <div class="rail low"><span style="width: 72%"></span></div>
+              <div>连续趋势 + DPG</div>
+            </div>
+          </div>
+
+          <p class="plain-note" style="margin-top: 14px">
+            怎么读：条形越短表示对绝对误差越苛刻；“趋势优先”表示绝对偏差可校准，但方向、斜率和拐点必须稳定。
+            产品含义：小米当前 0.47℃ MAE 已接近或超过女性周期与恢复类信号量级，不能作为独立主输入。
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="needs">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">User Needs</p>
+              <h2>用户真实需求：不是“想看温度”，而是想降低状态判断的不确定性</h2>
+            </div>
+            <p>整理自你提供的运动、睡眠、健康与特殊场景需求。这里把用户问题、所需温度信号和最低产品能力拆开。</p>
+          </div>
+
+          <div class="grid three">
+            <article class="card">
+              <h3>耐力运动 / 高温训练</h3>
+              <p>想知道“我是不是真的热到极限了”，并在高温高湿环境下控制强度、防中暑。</p>
+              <div class="tag-row">
+                <span class="tag core">连续核心温</span>
+                <span class="tag dpg">热负荷</span>
+                <span class="tag skin">散热状态</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>睡眠健康 / 入睡识别</h3>
+              <p>想用核心温下降、皮温上升和 DPG 下降判断入睡时段、深睡稳定期和醒前回升。</p>
+              <div class="tag-row">
+                <span class="tag core">Hammock曲线</span>
+                <span class="tag dpg">DPG拐点</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>倒时差 / 夜班人群</h3>
+              <p>想知道体温节律是否前移或后移，用来辅助作息调整，而不是只看主观困意。</p>
+              <div class="tag-row">
+                <span class="tag core">昼夜节律</span>
+                <span class="tag risk">跨日稳定</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>户外工作 / 极限环境</h3>
+              <p>需要安全监测，关注高温、热疲劳和过热预警；环境风、湿度、衣物都必须作为干扰项记录。</p>
+              <div class="tag-row">
+                <span class="tag core">安全阈值</span>
+                <span class="tag skin">环境暴露</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>女性健康 / 周期</h3>
+              <p>需要连续、无创、低噪声的多日温度趋势。单次测量误差若接近 0.5℃，就难以支撑周期判断。</p>
+              <div class="tag-row">
+                <span class="tag core">0.2-0.5℃信号</span>
+                <span class="tag risk">个人基线</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>医疗 / 康复 / 家庭监测</h3>
+              <p>排斥侵入式测量，但需要比额温、耳温、手表皮温更连续、更可解释的体温趋势。</p>
+              <div class="tag-row">
+                <span class="tag core">无创连续</span>
+                <span class="tag risk">可解释</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">DPG + Hammock</p>
+              <h2>睡眠场景最有价值的不是单点温度，而是核心温、皮温和 DPG 的组合形态</h2>
+            </div>
+            <p>根据你提供的博主摘要：睡眠期间核心温呈先降后升的吊床曲线，皮温常呈相反趋势，DPG 快速下降可辅助识别入睡。</p>
+          </div>
+
+          <div class="hammock-panel">
+            <svg class="hammock-svg" viewBox="0 0 1080 420" role="img" aria-label="核心温、皮温与DPG示意图">
+              <defs>
+                <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L6,3 z" fill="#6b7280"></path>
+                </marker>
+              </defs>
+              <rect x="0" y="0" width="1080" height="420" fill="#ffffff"></rect>
+              <line x1="70" y1="335" x2="1015" y2="335" stroke="#9aa4b2" stroke-width="2" marker-end="url(#arrow)"></line>
+              <line x1="70" y1="335" x2="70" y2="52" stroke="#9aa4b2" stroke-width="2" marker-end="url(#arrow)"></line>
+              <text x="84" y="58" fill="#5b6575" font-size="16">温度 / 温差</text>
+              <text x="920" y="365" fill="#5b6575" font-size="16">睡眠进程</text>
+              <path d="M90 120 C210 130, 265 210, 360 242 C520 300, 700 302, 840 235 C910 205, 940 168, 990 132" fill="none" stroke="#2563eb" stroke-width="6"></path>
+              <path d="M90 292 C190 246, 270 196, 385 162 C540 118, 705 132, 850 174 C920 196, 958 235, 990 268" fill="none" stroke="#ef4444" stroke-width="6"></path>
+              <path d="M90 96 C220 118, 300 192, 390 246 C545 320, 720 300, 880 218 C935 190, 960 158, 990 126" fill="none" stroke="#7c3aed" stroke-width="5" stroke-dasharray="12 10"></path>
+              <line x1="290" y1="70" x2="290" y2="335" stroke="#b45309" stroke-width="2" stroke-dasharray="6 6"></line>
+              <text x="300" y="92" fill="#92400e" font-size="18" font-weight="700">入睡拐点</text>
+              <text x="105" y="105" fill="#2563eb" font-size="18">CORE核心温：慢降 → 陡降 → 最低 → 醒前回升</text>
+              <text x="105" y="312" fill="#ef4444" font-size="18">皮温：入睡前后上升，常与核心温相反</text>
+              <text x="615" y="92" fill="#7c3aed" font-size="18">DPG：核心温 - 皮温，入睡时快速下降</text>
+            </svg>
+            <div class="legend">
+              <span><i></i>核心温 Hammock 曲线</span>
+              <span class="skin-line"><i></i>皮肤温度</span>
+              <span class="dpg-line"><i></i>DPG</span>
+            </div>
+            <p class="plain-note" style="margin-top: 12px">
+              怎么读：入睡不是看某一个温度点，而是看核心温下降斜率、皮温上升和 DPG 下降是否同时出现。产品含义：设备必须同时支持核心温、皮温和稳定趋势，才有机会做入睡/深睡算法。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="devices">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Device Capability</p>
+              <h2>设备能力对比：从真实金标到消费穿戴</h2>
+            </div>
+            <p>评分是产品内部可读的相对能力矩阵，不是官方规格。CORE 2 相关内容来自你提供的博主摘要；小米、水银、CORE 1 数据来自本地实验。</p>
+          </div>
+
+          <div class="score-matrix" aria-label="设备能力矩阵">
+            <div class="device-row">
+              <div class="device-name">直肠胶囊</div>
+              <div class="score-cell"><div class="score-label">连续性</div><div class="score-bar"><span style="width: 88%"></span></div></div>
+              <div class="score-cell"><div class="score-label">无创日常</div><div class="score-bar"><span style="width: 16%"></span></div></div>
+              <div class="score-cell"><div class="score-label">核心温能力</div><div class="score-bar"><span style="width: 100%"></span></div></div>
+              <div class="score-cell"><div class="score-label">DPG能力</div><div class="score-bar"><span style="width: 20%"></span></div></div>
+              <div class="score-cell"><div class="score-label">算法可用性</div><div class="score-bar"><span style="width: 72%"></span></div></div>
+            </div>
+            <div class="device-row">
+              <div class="device-name">CORE 1</div>
+              <div class="score-cell"><div class="score-label">连续性</div><div class="score-bar"><span style="width: 86%"></span></div></div>
+              <div class="score-cell"><div class="score-label">无创日常</div><div class="score-bar"><span style="width: 78%"></span></div></div>
+              <div class="score-cell"><div class="score-label">核心温能力</div><div class="score-bar"><span style="width: 72%"></span></div></div>
+              <div class="score-cell"><div class="score-label">DPG能力</div><div class="score-bar"><span style="width: 82%"></span></div></div>
+              <div class="score-cell"><div class="score-label">算法可用性</div><div class="score-bar"><span style="width: 62%"></span></div></div>
+            </div>
+            <div class="device-row">
+              <div class="device-name">CORE 2</div>
+              <div class="score-cell"><div class="score-label">连续性</div><div class="score-bar"><span style="width: 88%"></span></div></div>
+              <div class="score-cell"><div class="score-label">无创日常</div><div class="score-bar"><span style="width: 84%"></span></div></div>
+              <div class="score-cell"><div class="score-label">核心温能力</div><div class="score-bar"><span style="width: 78%"></span></div></div>
+              <div class="score-cell"><div class="score-label">DPG能力</div><div class="score-bar"><span style="width: 84%"></span></div></div>
+              <div class="score-cell"><div class="score-label">算法可用性</div><div class="score-bar"><span style="width: 72%"></span></div></div>
+            </div>
+            <div class="device-row">
+              <div class="device-name">水银温度计</div>
+              <div class="score-cell"><div class="score-label">连续性</div><div class="score-bar"><span style="width: 12%"></span></div></div>
+              <div class="score-cell"><div class="score-label">无创日常</div><div class="score-bar"><span style="width: 48%"></span></div></div>
+              <div class="score-cell"><div class="score-label">核心温能力</div><div class="score-bar"><span style="width: 52%"></span></div></div>
+              <div class="score-cell"><div class="score-label">DPG能力</div><div class="score-bar"><span style="width: 0%"></span></div></div>
+              <div class="score-cell"><div class="score-label">算法可用性</div><div class="score-bar"><span style="width: 18%"></span></div></div>
+            </div>
+            <div class="device-row">
+              <div class="device-name">小米温度</div>
+              <div class="score-cell"><div class="score-label">连续性</div><div class="score-bar"><span style="width: 42%"></span></div></div>
+              <div class="score-cell"><div class="score-label">无创日常</div><div class="score-bar"><span style="width: 92%"></span></div></div>
+              <div class="score-cell"><div class="score-label">核心温能力</div><div class="score-bar"><span style="width: 38%"></span></div></div>
+              <div class="score-cell"><div class="score-label">DPG能力</div><div class="score-bar"><span style="width: 8%"></span></div></div>
+              <div class="score-cell"><div class="score-label">算法可用性</div><div class="score-bar"><span style="width: 28%"></span></div></div>
+            </div>
+          </div>
+
+          <div class="table-wrap" style="margin-top: 18px">
+            <table>
+              <thead>
+                <tr>
+                  <th>设备</th>
+                  <th>当前能做到什么</th>
+                  <th>主要限制</th>
+                  <th>适合承担的角色</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>直肠胶囊</td>
+                  <td>真实核心温金标，可对 CORE 1/2 做趋势和绝对值校验。</td>
+                  <td>侵入、不适合长期日常佩戴，无法代表消费级体验。</td>
+                  <td>实验金标。</td>
+                </tr>
+                <tr>
+                  <td>CORE 1</td>
+                  <td>本实验伪金标；可输出核心温估计、皮温和 DPG；运动/睡眠大趋势可用。</td>
+                  <td>日常微小波动、低动态场景稳定性有限；不是直肠胶囊级真实金标。</td>
+                  <td>当前实验参照与连续温度研究工具。</td>
+                </tr>
+                <tr>
+                  <td>CORE 2</td>
+                  <td>按用户提供摘要，低波动日常更稳、入睡下降斜率更接近胶囊、拐点更清晰。</td>
+                  <td>仍需更多真实数据；日常 1℃内微波动仍是难题。</td>
+                  <td>更适合全天连续监测和睡眠/DPG 算法探索。</td>
+                </tr>
+                <tr>
+                  <td>水银温度计</td>
+                  <td>本数据 MAE 0.54℃，Pearson r 0.56；排序/趋势比小米更像 CORE 核心温。</td>
+                  <td>只能单点测量，系统性低估，不能做连续算法输入。</td>
+                  <td>离散校验点与粗略参考。</td>
+                </tr>
+                <tr>
+                  <td>小米温度</td>
+                  <td>本数据 MAE 0.47℃，RMSE 0.60℃，±0.3℃内 45%。</td>
+                  <td>趋势同向率不足，个体和衣着/遮挡干扰明显。</td>
+                  <td>低权重辅助信号，不宜独立承担核心算法输入。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="xiaomi">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Xiaomi Test</p>
+              <h2>小米实测：数值多数靠近核心温，但趋势不足</h2>
+            </div>
+            <p>以下统计全部来自你原始实验数据与校正后的 `Time_Corrected`。结论只代表当前 4 人、107 点样本，不外推到全人群。</p>
+          </div>
+
+          <div class="pillars">
+            <div class="pillar">
+              <div class="number">0.47℃</div>
+              <h3>整体 MAE</h3>
+              <p>相对 CORE 1 胸核心温估计；RMSE 0.60℃。</p>
+            </div>
+            <div class="pillar">
+              <div class="number">45%</div>
+              <h3>±0.3℃ 内</h3>
+              <p>对经期、恢复等微小趋势任务偏弱。</p>
+            </div>
+            <div class="pillar">
+              <div class="number">21%</div>
+              <h3>24小时同向率</h3>
+              <p>CORE 有变化时，小米同向比例约 21%。</p>
+            </div>
+            <div class="pillar">
+              <div class="number">88%</div>
+              <h3>高胸皮温区间更像皮温</h3>
+              <p>CORE胸皮温 36-36.5℃ 时，数值更接近皮温。</p>
+            </div>
+            <div class="pillar">
+              <div class="number">2</div>
+              <h3>出汗标记</h3>
+              <p>只做探索性观察，不建立通用阈值。</p>
+            </div>
+          </div>
+
+          <div class="grid two" style="margin-top: 18px">
+            <figure class="chart-card">
+              <img src="assets/device_core_skin_similarity.png" alt="设备与 CORE 核心温和皮温相似性图" />
+              <figcaption class="chart-caption">
+                <span><strong>怎么读：</strong>左侧 MAE 越低越像；右侧相邻变化相关性越高越像趋势。</span>
+                <span><strong>产品含义：</strong>小米数值更靠近核心温，但趋势更受皮温/局部环境影响。</span>
+              </figcaption>
+            </figure>
+            <figure class="chart-card">
+              <img src="assets/sweat_motion_response.png" alt="运动出汗点前后趋势图" />
+              <figcaption class="chart-caption">
+                <span><strong>怎么读：</strong>运动出汗后没有出现绝对误差突然崩坏，但小米在部分运动段平台化。</span>
+                <span><strong>产品含义：</strong>运动/出汗/快速状态切换时应降低趋势权重。</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="threshold">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Threshold</p>
+              <h2>为什么会出现“高皮温时更像皮温”？</h2>
+            </div>
+            <p>总体 74% 的小米点更接近核心温；但当 CORE 胸皮温升到约 35.7-36.0℃ 以上时，设备读数更容易落到皮温附近。这是条件结论，不是总体结论。</p>
+          </div>
+
+          <figure class="chart-card">
+            <img src="assets/chest_skin_threshold_skinlike.png" alt="CORE 胸皮温阈值和皮温相似比例图" />
+            <figcaption class="chart-caption">
+              <span><strong>怎么读：</strong>胸皮温低于 35℃ 时几乎不会更接近皮温；36-36.5℃ 时，小米 88%、水银 65% 更接近皮温。</span>
+              <span><strong>产品含义：</strong>局部热、衣着遮挡、皮肤升温会让“核心温解释”风险上升，算法要识别并降权。</span>
+            </figcaption>
+          </figure>
+
+          <div class="callout" style="margin-top: 18px">
+            重要解释：这个阈值是以 CORE 胸皮温为条件，不是小米自身读数阈值。用小米读数本身没有找到稳定切换点；它更像是皮肤被衣物或局部热环境加热后，读数自然落在皮温和核心温之间。
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="decision">
+        <div class="page-shell">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Decision</p>
+              <h2>功能可用性判断</h2>
+            </div>
+            <p>把“温度值是否接近”转成“能不能用于算法输入”。小米当前可以进入特征池，但不应是主导判断。</p>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>未来输入</th>
+                  <th>需要的能力</th>
+                  <th>当前小米判断</th>
+                  <th>原因</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>女性经期 / 月周期</td>
+                  <td>0.2-0.5℃ 级别多日趋势，稳定个人基线。</td>
+                  <td>不建议独立使用</td>
+                  <td>小米总体 MAE 0.47℃；女性受试者 MAE 0.80℃，误差接近或超过目标信号。</td>
+                </tr>
+                <tr>
+                  <td>夜间恢复 / 多日绝对差</td>
+                  <td>跨夜可比、偏差稳定、异常状态可剔除。</td>
+                  <td>当前不建议</td>
+                  <td>一致性界限宽，24 小时生活趋势下 delta MAE 0.31℃。</td>
+                </tr>
+                <tr>
+                  <td>昼夜节律</td>
+                  <td>连续多日核心温趋势，方向和相位稳定。</td>
+                  <td>不建议作为主输入</td>
+                  <td>CORE 变化时小米同向率约 21%，难以支撑主判断。</td>
+                </tr>
+                <tr>
+                  <td>入睡阶段识别</td>
+                  <td>20-30 分钟窗口内拐点、斜率、DPG 下降。</td>
+                  <td>可作为辅助</td>
+                  <td>若没有可靠皮温/DPG和连续趋势，仅靠小米单点温度不够。</td>
+                </tr>
+                <tr>
+                  <td>运动热负荷</td>
+                  <td>核心温上升趋势、皮温散热、热区间预警。</td>
+                  <td>谨慎辅助</td>
+                  <td>绝对误差未必最大，但运动段平台化明显，需结合心率/运动/环境。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid three" style="margin-top: 18px">
+            <article class="card">
+              <h3>算法上线前必须补采</h3>
+              <p>连续 14-28 天夜间固定窗口；记录室温、湿度、风、衣着、佩戴松紧、摘戴、洗澡、运动和出汗。</p>
+            </article>
+            <article class="card">
+              <h3>建模默认策略</h3>
+              <p>先做个人基线；运动、出汗、通勤、皮温高、快速变化时降权；避免用单点变化判断核心温趋势。</p>
+            </article>
+            <article class="card">
+              <h3>页面数据边界</h3>
+              <p>CORE 1 是本实验伪金标，不是直肠胶囊真实金标；小米结论仅限当前 4 人、107 点数据。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="page-shell">
+        数据来源：`analysis_output/*.csv`、`analysis_output/final_temperature_report.md` 与用户提供的 The Quantified Scientist 内容摘要。网页为静态本地报告，不依赖外部网络。
+      </div>
+    </footer>
+  </body>
+</html>
