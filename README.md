@@ -41,12 +41,6 @@ Open this file in a browser:
 analysis_output/web_report/index.html
 ```
 
-The original local file URL used during review was:
-
-```text
-file:/analysis_output/web_report/index.html
-```
-
 ## GitHub Pages
 
 After GitHub Pages is enabled for this repository, the direct web-report URL is intended to be:
