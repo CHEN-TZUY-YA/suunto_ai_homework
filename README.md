@@ -44,7 +44,7 @@ analysis_output/web_report/index.html
 The original local file URL used during review was:
 
 ```text
-file:///Users/ziyachenchen/Downloads/%E4%BD%93%E6%B8%A9%E6%95%B0%E6%8D%AE/analysis_output/web_report/index.html
+file:/analysis_output/web_report/index.html
 ```
 
 ## GitHub Pages
